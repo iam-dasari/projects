@@ -1,32 +1,45 @@
-name: ec2 deployment
+name: EC2 Deployment
 
 on:
   push:
-    - main
+    branches:
+      - main
   pull_request:
-    - main
+    branches:
+      - main
 
 jobs:
   ec2_deployment:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.7.0
-    
-    - name: Terraform Init
-      run: terraform init
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
 
-    - name: Terraform validate
-      run: terraform validate
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::114872710270:role/roboshop-oidc
+          aws-region: us-east-1
 
-    - name: Terraform plan
-      run: terraform plan
+      - name: Terraform Init
+        run: terraform init
 
-    - name: Terraform apply
-      run: terraform apply --auto-approve
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
