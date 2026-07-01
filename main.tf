@@ -1,7 +1,7 @@
 resource "aws_security_group" "inline_sg" {
   name        = "roboshop-sg"
   description = "Managed entirely inline"
-  vpc_id      = var.vpc_id
+  #vpc_id      = var.vpc_id
 
   ingress {
     description = "Allow SSH"
