@@ -1,5 +1,5 @@
 resource "aws_security_group" "inline_sg" {
-  name        = "roboshop-sg"
+  name        = "roboshop-sg1"
   description = "Managed entirely inline"
   #vpc_id      = var.vpc_id
 
